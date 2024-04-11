@@ -41,7 +41,8 @@ class ReplayBuffer(object):
         return states, actions, rewards, new_states, dones
     
 def build_dqn(lr, n_actions,input_dims, fcl_dims):
-    model = Sequential()
+
+    model:Sequential = Sequential()
     model.add(Conv2D(filters=32,kernel_size=8,strides=4, activation='relu',
                      inout_shape=(*input_dims,), data_format='channels_first'))
     model.add(Conv2D(filters=6,kernel_size=4,strides=2, activation='relu',
@@ -104,6 +105,25 @@ class Agent(object):
             q_next[done] = 0.0
 
             indices = np.arange(self.batch_size)
-            q_target  =q_eval
+            q_target  =q_eval[:]
+            
+            q_target[indices,action] = reward + \
+                                                self.gamma*np.max(q_next,axis=1)
+            
+            self.q_eval.train_on_batch(state,q_target)
 
+            self.epsilon = self.epsilon - self.eps_dec  \
+                            if self.epsilon > self.eps_min else self.eps_min
+            
+            self.learn_step += 1
+        
+    def save_models(self):
+        self.q_eval.save(self.q_eval_model_file)
+        self.q_next.save(self.q_target_model_file)
+        print('...saving models...')
+
+    def load_models(self):
+        self.q_eval=load_model(self.q_eval_model_file)
+        self.q_next=load_model(self.q_target_model_file)
+        print('...loading models...')
 
