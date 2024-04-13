@@ -2,19 +2,22 @@ import gymnasium as gym
 import matplotlib.pyplot as plt
 import numpy as np
 
-def plotLearning(x,scores,epsilon,filename,window):
+def plotLearning(x,scores,epsilon,filename,window=5):
     fig=plt.figure()
     ax=fig.add_subplot(111, label="1")
     ax2=fig.add_subplot(111, label="2", frame_on=False)
-    ax.plot(x, epsilon, color="CO")
-    ax.set_xlabel("Game", color="CO")
-    ax.set_ylabel("Epsilon", color="CO")
-    ax.tick_params(axis='x', colors="CO")
-    ax.tick_params(axis='y', colors="CO")
+
+    ax.plot(x, epsilon, color="C0")
+    ax.set_xlabel("Game", color="C0")
+    ax.set_ylabel("Epsilon", color="C0")
+    ax.tick_params(axis='x', colors="C0")
+    ax.tick_params(axis='y', colors="C0")
+
     N = len(scores)
     running_avg = np.empty(N)
     for t in range(N):
         running_avg [t] = np.mean (scores [max (0, t-window):(t+1)])
+
     ax2.scatter(x, running_avg, color="C1")
     #ax2.xaxis.tick_top()
     ax2.axes.get_xaxis().set_visible(False)
@@ -25,9 +28,16 @@ def plotLearning(x,scores,epsilon,filename,window):
     ax2.yaxis.set_label_position('right')
     #ax2.tick_params(axis='x', colors="C1")
     ax2.tick_params(axis='y', colors="C1")
+    
+    # if lines is not None:
+    #     for line in lines:
+    #         plt.axvline(x=line)
+    
+    plt.savefig(filename)
+
 
 class SkipEnv(gym.Wrapper):
-    def __init(self,env=None, skip=4):
+    def __init__(self,env=None, skip=4):
         super(SkipEnv,self).__init__(env)
         self._skip=skip
 
@@ -41,7 +51,7 @@ class SkipEnv(gym.Wrapper):
             if done:
                 break
             
-        return obs,t_reward,done,info
+        return obs,t_reward, terminated, truncated,info
     
 class PreProcessFrame(gym.ObservationWrapper):
     def __init__(self,env=None):
@@ -65,9 +75,9 @@ class MoveImageChannel(gym.ObservationWrapper):
         super(MoveImageChannel,self).__init__(env)
         self.observation_space = gym.spaces.Box(low=0.0, high=1.0,
                                             shape=(self.observation_space.shape[-1],
-                                                self.observation_space.shape[0],
-                                                self.observation_space.shape[1])
-                                            ,dtype=np.float32)
+                                                    self.observation_space.shape[0],
+                                                    self.observation_space.shape[1]),
+                                                    dtype=np.float32)
         
     def observation(self,observation):
         return np.moveaxis(observation,2,0)
@@ -84,13 +94,15 @@ class BufferWrapper(gym.ObservationWrapper):
             env.observation_space.high.repeat(n_steps,axis=0),
             dtype=np.float32)
     
-    def reset(self):
+    def reset(self, **kwargs):
         self.buffer = np.zeros_like(self.observation_space.low,dtype=np.float32)
-        return self.observation(self.env.reset())
+        return self.observation(self.env.reset()),{}
     
     def observation(self, observation):
+        if observation[0][0].shape==(80,80):
+            observation=observation[0]
         self.buffer[:-1]=self.buffer[1:]
-        self.buffer[-1]=observation
+        self.buffer[-1]=observation[0]
         return self.buffer
 
 def make_env(env_name):
