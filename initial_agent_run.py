@@ -2,13 +2,15 @@ import numpy as np
 from dqn_keras import Agent
 from utils import  make_env
 
+
+# After runnning this file, you will recieve an initial model.
 if __name__ == '__main__':
     env = make_env('ALE/Pong-v5')
 
     num_games = 700
-    load_checkpoint = True
+    load_checkpoint = False
     best_score = -21
-    agent = Agent(gamma=0.99, epsilon=0.02, alpha=0.0001,
+    agent = Agent(gamma=0.99, epsilon=1.0, alpha=0.0001,
                   input_dims=(4,80,80), n_actions=6, mem_size=25000,
                   eps_min=0.02, batch_size=32, replace=1000, eps_dec=1e-5)
 
@@ -30,12 +32,12 @@ if __name__ == '__main__':
             done = terminated or truncated
             n_steps += 1
             score += reward
-            # if not load_checkpoint:
-            agent.store_transition(observation, action,
-                                    reward, observation_, int(done))
-            agent.learn()
-            # else:
-            #     env.render()
+            if not load_checkpoint:
+                agent.store_transition(observation, action,
+                                     reward, observation_, int(done))
+                agent.learn()
+            else:
+                env.render()
             observation = observation_
 
         scores.append(score)
