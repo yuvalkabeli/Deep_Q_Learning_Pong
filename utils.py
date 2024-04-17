@@ -79,7 +79,7 @@ class BufferWrapper(gym.ObservationWrapper):
         return self.buffer
 
 def make_env(env_name):
-    env = gym.make(env_name,render_mode='human')
+    env = gym.make(env_name)
     env = SkipEnv(env)
     env = PreProcessFrame(env)
     env = MoveImgChannel(env)

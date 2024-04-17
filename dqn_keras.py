@@ -74,7 +74,6 @@ class Agent(object):
         self.q_eval_model_file = q_eval_fname
         self.learn_step = 0
         disable_interactive_logging()
-        # debugging.set_log_device_placement(True)
         config.experimental_run_functions_eagerly(True)
         self.memory = ReplayBuffer(mem_size, input_dims)
         self.q_eval = build_dqn(alpha, n_actions, input_dims, 512)
