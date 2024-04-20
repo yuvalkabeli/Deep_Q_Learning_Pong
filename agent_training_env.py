@@ -8,10 +8,10 @@ if __name__ == '__main__':
     env = make_env('ALE/Pong-v5')
 
     num_games = 500
-    best_score = -1
-    agent = Agent(gamma=0.99, epsilon=0.02, alpha=0.0001,
+    best_score = -10
+    agent = Agent(gamma=0.99, epsilon=0.01, alpha=0.0001,
                   input_dims=(4,80,80), n_actions=6, mem_size=25000,
-                  eps_min=0.02, batch_size=32, replace=1000, eps_dec=1e-5,
+                  eps_min=0.01, batch_size=32, replace=1000, eps_dec=1e-5,
                    q_eval_fname='q_eval.keras', q_target_fname='q_next.keras')
     
     agent.load_models()
@@ -41,7 +41,7 @@ if __name__ == '__main__':
         print('episode: ', f"{i}/{num_games}",'score: ', score,
              ' average score %.3f' % avg_score,
             'epsilon %.2f' % agent.epsilon, 'steps', n_steps)
-        if avg_score > best_score and i < 10:
+        if avg_score > best_score and i > 10:
             print('avg score %.2f better than best score %.2f, saving model' % (avg_score, best_score))
             agent.save_models()
             best_score = avg_score
