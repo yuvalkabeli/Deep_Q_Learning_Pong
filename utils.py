@@ -180,6 +180,16 @@ class BufferWrapper(gym.ObservationWrapper):
         return self.buffer
 
 def make_env(env_name, render_mode='rgb_array'):
+    """
+    Creates the gym env for the model to run on.
+    
+    Args:
+        env_name (str): Gym environment name.
+        render_mode (str):`human` option opens up visual game. defaults to `rgb_array`.
+    
+    Returns:
+        ScaleFrame: Constructor for the observation wrapper..
+    """
     env = gym.make(env_name, render_mode=render_mode)
     env = SkipEnv(env)
     env = PreProcessFrame(env)
