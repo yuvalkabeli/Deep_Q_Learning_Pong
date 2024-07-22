@@ -6,7 +6,7 @@ This project implements Deep Q-Learning to play the classic game Pong. The Deep 
 
 1. Clone the repository:
     ```sh
-    git clone https://github.com/yuvalkabeli/Deep_Q_Learning_Pong.git
+    git clone https://github.com/your-username/Deep_Q_Learning_Pong.git
     cd Deep_Q_Learning_Pong
     ```
 
@@ -17,47 +17,47 @@ This project implements Deep Q-Learning to play the classic game Pong. The Deep 
 
 ## Usage
 
-1. Train the agent:
-    ```sh
-    python agent_training_env.py
-    ```
+### Training a Model from Scratch
 
-2. Refine the agent:
+To train a model from scratch, use the `initial_agent_run.py` script.
+
+1. Ensure your environment is set up and dependencies are installed.
+2. Run the script:
+    ```sh
+    python initial_agent_run.py
+    ```
+   This will initialize the environment and train the agent for a specified number of games, storing transitions and learning from them to improve performance. The model will be saved if it achieves a better average score than previously recorded.
+
+### Refining the Agent
+
+To further refine the agent using an existing model, follow these steps:
+
+1. Ensure the pretrained model is in the appropriate directory.
+2. Run the `agent_refinement_env.py` script:
     ```sh
     python agent_refinement_env.py
     ```
+   This script will load the existing model and continue training, fine-tuning the agent's performance.
+   
+### Testing the Pretrained Agent
 
-3. Run the initial agent (optional):
-    ```sh
-    python initial_agent_run.py
-    ```
-    > Use this if you don't want to run the entire training process, as it takes a while to train the agent. This script uses a pretrained model generated from `agent_training_env.py`.
-
-## Running the Initial Agent
-
-To run the initial agent using the pretrained `q_eval` model, you need to configure the agent object with the path to the initial files and set `load_checkpoint` to `True`. 
+To test the agent using a pretrained model, use the `test_env.py` script.
 
 1. Ensure the `q_eval` model is in the appropriate directory.
-2. Modify the `initial_agent_run.py` script to include the path to the pretrained model:
-    ```python
-    agent = Agent(alpha=0.0001, gamma=0.99, n_actions=6, epsilon=1.0, batch_size=64, input_dims=[210, 160, 4], chkpt_dir='models/')
-    agent.load_models()  # Make sure load_checkpoint is set to True within the Agent class
-    ```
-3. Run the script:
+2. Run the script:
     ```sh
-    python initial_agent_run.py
+    python test_env.py
     ```
-This will load the pretrained `q_eval` model and execute it in the Gym environment, displaying the agent's performance in a window.
+   This will load the pretrained `q_eval` model and execute it in the Gym environment with rendering enabled, displaying the agent's performance in a window.
 
 ## Files
 
-- `agent_refinement_env.py`: Environment for agent refinement.
-- `agent_training_env.py`: Environment for agent training.
+- `initial_agent_run.py`: Script to train the agent from scratch.
+- `agent_refinement_env.py`: Script to refine the agent using an existing model.
+- `test_env.py`: Script to test the agent using a pretrained model.
 - `dqn_keras.py`: Deep Q-Network implementation using Keras.
-- `initial_agent_run.py`: Script to run the initial agent.
-- `utils.py`: Utility functions.
+- `utils.py`: Utility functions for environment setup.
 
 ## Contributing
 
 Feel free to submit pull requests to improve the project or fix any issues.
-
